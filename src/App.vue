@@ -33,7 +33,6 @@ export default {
       }
     }), wasmTs])
     p.then(_ => {
-      debugger
       this.fibC = _[0].instance.exports.fibonacci;
       this.fibTs = _[1].fibonacci;
       let i = 40
@@ -72,20 +71,6 @@ export default {
       //   i += 3
       // }
       // this.$refs.chart.drawChart({ xAxis: this.xAxis, series: { c: this.cTimes, js: this.jsTimes }})
-    // });
-    // wasmTs.then(result => {
-    //   this.fibTs = result.fibonacci;
-
-    //   let i = 40
-    //   while(i < 47) {
-    //     this.xAxis.push(i)
-    //     this.cTimes.push(this.computeTime(this.fibTs, i))
-    //     // this.cTailTimes[i] = this.computeTime(this.fibTailC, i)
-    //     this.jsTimes.push(this.computeTime(this.fibJS, i))
-    //     // this.jsTailTimes[i] = this.computeTime(this.fibTailJS, i)
-    //     i += 3
-    //   }
-    //   this.$refs.chart.drawChart({ xAxis: this.xAxis, series: { c: this.cTimes, js: this.jsTimes }})
     // });
   },
   methods: {
