@@ -25,7 +25,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     alias: {
-      'vue$': 'vue/dist/vue.esm.js',
+      'vue': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
     }
   },
@@ -75,6 +75,14 @@ module.exports = {
             compiller: '-Os -s WASM=1 -s SIDE_MODULE=1'
           }
         }]
+      },
+      {
+        test: /\.ts?$/,
+        loader: 'assemblyscript-typescript-loader',
+        options: {
+          limit: 1000,
+          name: `assembly/[name].[hash:8].wasm`
+        }
       }
     ]
   },

@@ -7,6 +7,7 @@
 <script>
 import Echart from './components/Echart'
 import wasmC from './wasm/index.c'
+import wasmTs from './ts-wasm/index.ts'
 
 export default {
   name: 'App',
@@ -14,16 +15,15 @@ export default {
     return {
       xAxis: [],
       cTimes: [],
-      cTailTimes: [],
       jsTimes: [],
-      jsTailTimes: []
+      tsTimes: [],
     }
   },
   components: {
     Echart
   },
   mounted() {
-    wasmC({
+    const p = Promise.all([wasmC({
       'global': {},
       'env': {
         'memoryBase': 0,
@@ -31,23 +31,62 @@ export default {
         'memory': new WebAssembly.Memory({initial: 256}),
         'table': new WebAssembly.Table({initial: 0, element: 'anyfunc'})
       }
-    }).then(result => {
-      const exports = result.instance.exports;
-      const add = exports.add;
-      this.fibC = exports.fibonacci;
-      this.fibTailC = exports.fibonacciTail;
-
+    }), wasmTs])
+    p.then(_ => {
+      debugger
+      this.fibC = _[0].instance.exports.fibonacci;
+      this.fibTs = _[1].fibonacci;
       let i = 40
-      while(i < 45) {
+      console.log(i);
+      while(i < 42) {
         this.xAxis.push(i)
         this.cTimes.push(this.computeTime(this.fibC, i))
         // this.cTailTimes[i] = this.computeTime(this.fibTailC, i)
-        this.jsTimes.push(this.computeTime(this.fibJS, i))
+        this.tsTimes.push(this.computeTime(this.fibTs, i))
         // this.jsTailTimes[i] = this.computeTime(this.fibTailJS, i)
         i += 3
       }
-      this.$refs.chart.drawChart({ xAxis: this.xAxis, series: { c: this.cTimes, js: this.jsTimes }})
-    });
+      this.$refs.chart.drawChart({ xAxis: this.xAxis, series: { c: this.cTimes, ts: this.tsTimes }})
+    }).catch(console.log)
+    // wasmC({
+    //   'global': {},
+    //   'env': {
+    //     'memoryBase': 0,
+    //     'tableBase': 0,
+    //     'memory': new WebAssembly.Memory({initial: 256}),
+    //     'table': new WebAssembly.Table({initial: 0, element: 'anyfunc'})
+    //   }
+    // }).then(result => {
+    //   const exports = result.instance.exports;
+    //   const add = exports.add;
+    //   this.fibC = exports.fibonacci;
+    //   this.fibTailC = exports.fibonacciTail;
+
+      // let i = 40
+      // while(i < 45) {
+      //   this.xAxis.push(i)
+      //   this.cTimes.push(this.computeTime(this.fibC, i))
+      //   // this.cTailTimes[i] = this.computeTime(this.fibTailC, i)
+      //   this.jsTimes.push(this.computeTime(this.fibJS, i))
+      //   // this.jsTailTimes[i] = this.computeTime(this.fibTailJS, i)
+      //   i += 3
+      // }
+      // this.$refs.chart.drawChart({ xAxis: this.xAxis, series: { c: this.cTimes, js: this.jsTimes }})
+    // });
+    // wasmTs.then(result => {
+    //   this.fibTs = result.fibonacci;
+
+    //   let i = 40
+    //   while(i < 47) {
+    //     this.xAxis.push(i)
+    //     this.cTimes.push(this.computeTime(this.fibTs, i))
+    //     // this.cTailTimes[i] = this.computeTime(this.fibTailC, i)
+    //     this.jsTimes.push(this.computeTime(this.fibJS, i))
+    //     // this.jsTailTimes[i] = this.computeTime(this.fibTailJS, i)
+    //     i += 3
+    //   }
+    //   this.$refs.chart.drawChart({ xAxis: this.xAxis, series: { c: this.cTimes, js: this.jsTimes }})
+    // });
   },
   methods: {
     computeTime(func, times) {

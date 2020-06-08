@@ -146,6 +146,13 @@ export default {
             label: labelOption,
             // data: [4061, 20296, 82032, 369963]
             data: data.series.js
+          },
+          {
+            name: 'ts',
+            type: 'bar',
+            label: labelOption,
+            // data: [4061, 20296, 82032, 369963]
+            data: data.series.ts
           }
         ]
       };
