@@ -78,12 +78,25 @@ module.exports = {
       },
       {
         test: /\.ts?$/,
-        loader: 'assemblyscript-typescript-loader',
-        options: {
-          limit: 1000,
-          name: `assembly/[name].[hash:8].wasm`
-        }
+        use: [{
+          loader: 'wasm-loader'
+        }, {
+          // loader: path.resolve('src/loader/index.js'),
+          loader: 'ts-wasm-loader',
+          options: {
+            publicPath: 'xixihaha'
+          }
+        }]
+        
       }
+      // {
+      //   test: /\.ts?$/,
+      //   loader: 'assemblyscript-typescript-loader',
+      //   options: {
+      //     limit: 1,
+      //     name: `assembly/[name].[hash:8].wasm`
+      //   }
+      // }
     ]
   },
   node: {

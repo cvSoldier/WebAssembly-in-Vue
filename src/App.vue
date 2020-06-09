@@ -23,20 +23,22 @@ export default {
     Echart
   },
   mounted() {
-    const p = Promise.all([wasmC({
+    const wasmOption = {
       'global': {},
       'env': {
         'memoryBase': 0,
         'tableBase': 0,
         'memory': new WebAssembly.Memory({initial: 256}),
-        'table': new WebAssembly.Table({initial: 0, element: 'anyfunc'})
+        'table': new WebAssembly.Table({initial: 0, element: 'anyfunc'}),
+        'abort': () => {}
       }
-    }), wasmTs])
+    }
+    
+    const p = Promise.all([wasmC(wasmOption), wasmTs(wasmOption)])
     p.then(_ => {
       this.fibC = _[0].instance.exports.fibonacci;
-      this.fibTs = _[1].fibonacci;
+      this.fibTs = _[1].instance.exports.fibonacci;
       let i = 40
-      console.log(i);
       while(i < 42) {
         this.xAxis.push(i)
         this.cTimes.push(this.computeTime(this.fibC, i))
